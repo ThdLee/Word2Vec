@@ -1,5 +1,8 @@
 # Word2Vec
 
+Vocabulary Size : 151940
+Words in train file: 7345315
+
 ## Training Time (second)
 
 ||no negative sampling| negative sampling|
