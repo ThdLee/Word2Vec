@@ -1,6 +1,9 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !pom.xml
+out/
+corpus/
+model/
 ### STS ###
 .apt_generated
 .classpath
@@ -14,7 +17,8 @@ target/
 *.iws
 *.iml
 *.ipr
-
+*.mod
+*.txt
 ### NetBeans ###
 nbproject/private/
 build/

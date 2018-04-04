@@ -1,4 +1,6 @@
 
+import domain.WordEntry;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -27,8 +29,10 @@ public class Word2VecTest {
 
         w2v.loadJavaModel("model/vector.mod") ;
 
-        System.out.println(w2v.distance("诚意")); ;
-
+        System.out.println("广东 - 广州 + 南京 = ");
+        for (WordEntry word : w2v.analogy("广州", "广东", "南京")) {
+            System.out.println(word.name + " " + word.score);
+        }
     }
 
 

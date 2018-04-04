@@ -25,7 +25,7 @@ public class Word2Vec {
 
     private int words;
     private int size;
-    private int topNSize = 40;
+    private int topNSize = 20;
 
     public void loadGoogleModel(String path) throws IOException {
         DataInputStream dis = null;

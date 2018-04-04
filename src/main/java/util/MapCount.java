@@ -9,8 +9,6 @@ public class MapCount<T> {
     private LinkedHashMap<T, Integer> hm = null;
     private ArrayList<T> indexMap = null;
 
-    private int size = 0;
-
     public MapCount() {
         this.hm = new LinkedHashMap<>();
         this.indexMap = new ArrayList<>();
@@ -29,7 +27,6 @@ public class MapCount<T> {
         } else {
             this.hm.put(t, Integer.valueOf(n));
         }
-        size += n;
     }
 
     public void add(T t) {
@@ -37,7 +34,7 @@ public class MapCount<T> {
     }
 
     public int size() {
-        return size;
+        return hm.size();
     }
 
     public void remove(T t) {

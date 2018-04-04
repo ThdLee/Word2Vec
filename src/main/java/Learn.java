@@ -55,6 +55,7 @@ public class Learn {
     }
 
     private void trainModel(File file) throws IOException {
+        long startTime = System.currentTimeMillis();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String temp = null;
             Long nextRandom = 5l;
@@ -100,9 +101,11 @@ public class Learn {
                     }
                 }
             }
+            long time = (System.currentTimeMillis() - startTime) / 1000;
             System.out.println("Vocab size: " + wordMap.size());
             System.out.println("Words in train file: " + trainWordsCount);
             System.out.println("success train over!");
+            System.out.println("elapsed time: " + time);
         }
     }
 
@@ -166,13 +169,13 @@ public class Learn {
                     }
                     double f = 0, g;
                     for (c = 0; c < layerSize; c++) {
-                        f += neu1e[c] * target.syn1neg[c];
+                        f += we.syn0[c] * target.syn1neg[c];
                     }
                     if (f > MAX_EXP) g = (label - 1) * alpha;
                     else if (f < -MAX_EXP) g = (label - 0) * alpha;
                     else g = (label - expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
                     for (c = 0; c < layerSize; c++) neu1e[c] += g * target.syn1neg[c];
-                    for (c = 0; c < layerSize; c++) target.syn1neg[c] += g * neu1e[c];
+                    for (c = 0; c < layerSize; c++) target.syn1neg[c] += g * we.syn0[c];
                 }
             }
 
