@@ -343,7 +343,7 @@ public class Learn {
     public void learnFile(File file) throws IOException {
         readVocab(file);
         new Haffman(layerSize).make(wordMap.values());
-        initializeUnigramTable();
+        if (isNegative) initializeUnigramTable();
         // 查找每个神经元
         for (Neuron neuron : wordMap.values()) {
             ((WordNeuron) neuron).makeNeurons();
@@ -355,6 +355,7 @@ public class Learn {
     public void learnFile(File summaryFile, File[] classifiedFiles) throws IOException {
         readVocabWithSupervised(classifiedFiles);
         new Haffman(layerSize).make(wordMap.values());
+        if (isNegative) initializeUnigramTable();
         // 查找每个神经元
         for (Neuron neuron : wordMap.values()) {
             ((WordNeuron) neuron).makeNeurons();
