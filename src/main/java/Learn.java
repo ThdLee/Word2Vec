@@ -114,7 +114,7 @@ public class Learn {
         int a, c = 0, d = 0;
         for (a = b; a < window * 2 + 1 - b; a++) {
             if (a == window) continue;
-            c = index - window + 1;
+            c = index - window + a;
             if (c < 0 || c >= sentence.size()) continue;
 
             double[] neu1e = new double[layerSize]; // 误差项
@@ -145,9 +145,10 @@ public class Learn {
                     out.syn1[c] += g * we.syn0[c];
                 }
             }
-            WordNeuron target;
-            int label = 0;
+
             if (isNegative) {
+                WordNeuron target;
+                int label = 0;
                 for (d = 0; d < negative + 1; d++) {
                     if (d == 0) {
                         target = word;
@@ -182,7 +183,7 @@ public class Learn {
         }
     }
 
-    private void cbowGram(int index, List<WordNeuron> sentence, long b, Long nextRandom) {
+    private void cbowGram(int index, List<WordNeuron> sentence, int b, Long nextRandom) {
         WordNeuron word = sentence.get(index);
         int a, c = 0, d = 0;
 
@@ -191,7 +192,7 @@ public class Learn {
         double[] neu1 = new double[layerSize];  // 误差项
         WordNeuron last_word;
 
-        for (a = (int)b; a < window * 2 + 1 - b; a++) {
+        for (a = b; a < window * 2 + 1 - b; a++) {
             if (a != window) {
                 c = index - window + a;
                 if (c < 0 || c >= sentence.size()) continue;
@@ -224,9 +225,9 @@ public class Learn {
             }
         }
 
-        WordNeuron target;
-        int label = 0;
         if (isNegative) {
+            WordNeuron target;
+            int label = 0;
             for (d = 0; d < negative + 1; d++) {
                 if (d == 0) {
                     target = word;
@@ -253,7 +254,7 @@ public class Learn {
                 for (c = 0; c < layerSize; c++) target.syn1neg[c] += g * neu1[c];
             }
         }
-        for (a = (int)b; a < window * 2 + 1 - b; a++) {
+        for (a = b; a < window * 2 + 1 - b; a++) {
             if (a != window) {
                 c = index - window + a;
                 if (c < 0 || c >= sentence.size()) continue;
