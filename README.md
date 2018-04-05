@@ -7,8 +7,8 @@ Words in train file: 7345315
 
 ||no negative sampling| negative sampling|
 |-----|:-----:|:-----:|
-|cbow|51|232|
-|skip-gram|147|774|
+|cbow|51|173|
+|skip-gram|147|491|
 
 ## Test (top20)
 

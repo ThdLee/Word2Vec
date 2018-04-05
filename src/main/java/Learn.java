@@ -95,9 +95,9 @@ public class Learn {
                 for (int index = 0; index < sentence.size(); index++) {
                     nextRandom = nextRandom * 25214903917L + 11;
                     if (isCbow) {
-                        cbowGram(index, sentence, (int) Long.remainderUnsigned(nextRandom, window), nextRandom);
+                        cbowGram(index, sentence, (int) Math.abs(nextRandom % window), nextRandom);
                     } else {
-                        skipGram(index, sentence, (int) Long.remainderUnsigned(nextRandom, window), nextRandom);
+                        skipGram(index, sentence, (int) Math.abs(nextRandom % window), nextRandom);
                     }
                 }
             }
@@ -161,7 +161,7 @@ public class Learn {
                         int i = (int)((nextRandom >> 16) % TABLE_SIZE);
                         target = (WordNeuron) wordMap.get(mc.getKey(i));
                         if (target == null) {
-                            i = (int)Long.remainderUnsigned(nextRandom, (wordMap.size() - 1) + 1);
+                            i = (int) Math.abs(nextRandom % ((wordMap.size() - 1) + 1));
                             target = (WordNeuron) wordMap.get(mc.getKey(i));
                         }
                         if (target == word) continue;
@@ -240,7 +240,7 @@ public class Learn {
                     int i = (int)((nextRandom >> 16) % TABLE_SIZE);
                     target = (WordNeuron) wordMap.get(mc.getKey(i));
                     if (target == null) {
-                        i = (int)Long.remainderUnsigned(nextRandom, (wordMap.size() - 1) + 1);
+                        i = (int)Math.abs(nextRandom % ((wordMap.size() - 1) + 1));
                         target = (WordNeuron) wordMap.get(mc.getKey(i));
                     }
                     if (target == word) continue;
