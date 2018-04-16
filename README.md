@@ -84,7 +84,7 @@ The dataset consist of 100,000 movie reviews taken from IMDB. There are 25,000 l
 
 ## Result
 
-50,000 labeled instances were be learned to generate word vectors and paragraph vectors. Then we use Word2Vec for sentiment analysis by attempting to classify the Cornell IMDB movie review corpus.
+50,000 labeled instances were be learned to generate word vectors and paragraph vectors. Then we use Word2Vec for sentiment analysis by attempting to classify the dataset.
 
 |  Model  | Accuracy |
 | :-----: | :------: |
