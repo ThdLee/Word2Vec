@@ -5,21 +5,6 @@ import java.util.*;
 
 public class Word2Vec {
 
-    public static void main(String[] args) throws IOException {
-        Word2Vec vec = new Word2Vec();
-        vec.loadJavaModel("library/javaSkip1");
-
-        String str = "毛泽东";
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 100; i++) {
-            System.out.println(vec.distance(str));
-            ;
-        }
-        System.out.println(System.currentTimeMillis() - start);
-
-        System.out.println(System.currentTimeMillis() - start);
-    }
-
 
     private HashMap<String, float[]> wordMap = new HashMap<>();
 
@@ -269,9 +254,6 @@ public class Word2Vec {
         return sb.toString();
     }
 
-    public HashMap<String, float[]> getWordMap() {
-        return wordMap;
-    }
 
     public int getWords() {
         return words;

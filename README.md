@@ -72,3 +72,29 @@ Words in train file: 7345315
 菲律宾 0.7727813
 萨哈夫 0.7726762
 ```
+
+# Doc2Vec
+
+Vocabulary Size : 100674
+Words in train file: 11711200
+
+## Dataset
+
+The dataset consist of 100,000 movie reviews taken from IMDB. There are 25,000 labeled training instances and 25,000 labeled test instances. The dataset can be downloaded at 	 http://ai.Stanford.edu/amaas/data/sentiment/index.html
+
+## Result
+
+50,000 labeled instances were be learned to generate word vectors and paragraph vectors. Then we use Word2Vec for sentiment analysis by attempting to classify the Cornell IMDB movie review corpus.
+
+|  Model  | Accuracy |
+| :-----: | :------: |
+|   DM    | 0.74484  |
+|  DBOW   | 0.71484  |
+| DM+DBOW | 0.85368  |
+
+
+
+
+​			
+​		
+​	

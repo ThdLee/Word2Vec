@@ -11,15 +11,15 @@ public class Word2VecTest {
     private static final File sportCorpusFile = new File("corpus/result.txt");
 
     public static void main(String[] args) throws IOException {
-        File file = new File("corpus/sport/swresult_withoutnature.txt");
-
+//        File file = new File("corpus/sport/swresult_withoutnature.txt");
+//
         //进行分词训练
 
-        Learn lean = new Learn() ;
-
-        lean.learnFile(file) ;
-
-        lean.saveModel(new File("model/vector.mod")) ;
+//        Word2VecLearn lean = new Word2VecLearn() ;
+//
+//        lean.learnFile(file) ;
+//
+//        lean.saveModel(new File("model/vector.mod")) ;
 
 
 
