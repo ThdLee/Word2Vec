@@ -37,8 +37,8 @@ public class Doc2VecLearn {
 
     private int trainWordsCount = 0;
 
-    private Model model = Model.BOTH;
-    private boolean isNegative = false;
+    private Model model = Model.DM;
+    private boolean isNegative = true;
 
     private double[] expTable = new double[EXP_TABLE_SIZE];
     private int[] table = null;
@@ -73,7 +73,6 @@ public class Doc2VecLearn {
         int lastWordCount = 0;
         int wordCountActual = 0;
 
-        int sentNo = 0;
         for (Pair<Integer, String[]> pair : docData) {
             if (wordCount - lastWordCount > 10000) {
                 System.out.println("alpha:" + alpha + "\tPrigress: "
@@ -107,15 +106,14 @@ public class Doc2VecLearn {
             for (int index = 0; index < sentence.size(); index++) {
                 nextRandom = nextRandom * 25214903917L + 11;
                 if (model == Model.DM) {
-                    dm(index, sentNo, sentence, (int) Math.abs(nextRandom % window), nextRandom);
+                    dm(index, pair.getKey(), sentence, (int) Math.abs(nextRandom % window), nextRandom);
                 } else if (model == Model.DBOW) {
-                    dbow(index, sentNo, sentence, (int) Math.abs(nextRandom % window), nextRandom);
+                    dbow(index, pair.getKey(), sentence, (int) Math.abs(nextRandom % window), nextRandom);
                 } else {
-                    dm(index, sentNo, sentence, (int) Math.abs(nextRandom % window), nextRandom);
-                    dbow(index, sentNo, sentence, (int) Math.abs(nextRandom % window), nextRandom);
+                    dm(index, pair.getKey(), sentence, (int) Math.abs(nextRandom % window), nextRandom);
+                    dbow(index, pair.getKey(), sentence, (int) Math.abs(nextRandom % window), nextRandom);
                 }
             }
-            sentNo++;
         }
         long time = (System.currentTimeMillis() - startTime) / 1000;
         System.out.println("Vocab size: " + wordMap.size());

@@ -38,6 +38,7 @@ public class Word2VecLearn {
     private int[] table = null;
 
     static private final int MAX_EXP = 6;
+    private ArrayList<String[]> data = new ArrayList<>();
 
     public Word2VecLearn(Boolean isCbow, Boolean isNegative, Integer layerSize, Integer window, Double alpha, Double sample, Integer negative) {
         createExpTable();
@@ -54,59 +55,58 @@ public class Word2VecLearn {
         createExpTable();
     }
 
-    private void trainModel(File file) throws IOException {
+    private void trainModel()  {
         long startTime = System.currentTimeMillis();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
-            String temp = null;
-            Long nextRandom = 5l;
-            int wordCount = 0;
-            int lastWordCount = 0;
-            int wordCountActual = 0;
-            while ((temp = br.readLine()) != null) {
-                if (wordCount - lastWordCount > 10000) {
-                    System.out.println("alpha:" + alpha + "\tPrigress: "
-                            + (int) (wordCountActual / (double) (trainWordsCount + 1) * 100)
-                            + "%");
-                    wordCountActual += wordCount - lastWordCount;
-                    lastWordCount = wordCount;
-                    alpha = startingAlpha * (1 - wordCountActual / (double) (trainWordsCount + 1));
-                    if (alpha < startingAlpha * 0.0001) {
-                        alpha = startingAlpha * 0.0001;
-                    }
-                }
-                String[] strs = temp.split(" +|\t+");
-                wordCount += strs.length;
-                List<WordNeuron> sentence = new ArrayList<WordNeuron>();
-                for (int i = 0; i < strs.length; i++) {
-                    Neuron entry = wordMap.get(strs[i]);
-                    if (entry == null) continue;
 
-                    if (sample > 0) {
-                        double ran = (Math.sqrt(entry.freq / (sample * trainWordsCount)) + 1)
-                                * (sample * trainWordsCount) / entry.freq;
-                        nextRandom = nextRandom * 25214903917L + 11;
-                        if (ran < (nextRandom & 0xFFFF) / (double) 65536) {
-                            continue;
-                        }
-                    }
-                    sentence.add((WordNeuron) entry);
-                }
+        Collections.shuffle(data);
 
-                for (int index = 0; index < sentence.size(); index++) {
-                    nextRandom = nextRandom * 25214903917L + 11;
-                    if (isCbow) {
-                        cbowGram(index, sentence, (int) Math.abs(nextRandom % window), nextRandom);
-                    } else {
-                        skipGram(index, sentence, (int) Math.abs(nextRandom % window), nextRandom);
-                    }
+        Long nextRandom = 5l;
+        int wordCount = 0;
+        int lastWordCount = 0;
+        int wordCountActual = 0;
+
+        for (String[] strs : data) {
+            if (wordCount - lastWordCount > 10000) {
+                System.out.println("alpha:" + alpha + "\tPrigress: "
+                        + (int) (wordCountActual / (double) (trainWordsCount + 1) * 100)
+                        + "%");
+                wordCountActual += wordCount - lastWordCount;
+                lastWordCount = wordCount;
+                alpha = startingAlpha * (1 - wordCountActual / (double) (trainWordsCount + 1));
+                if (alpha < startingAlpha * 0.0001) {
+                    alpha = startingAlpha * 0.0001;
                 }
             }
-            long time = (System.currentTimeMillis() - startTime) / 1000;
-            System.out.println("Vocab size: " + wordMap.size());
-            System.out.println("Words in train file: " + trainWordsCount);
-            System.out.println("success train over!");
-            System.out.println("elapsed time: " + time);
+            wordCount += strs.length;
+            List<WordNeuron> sentence = new ArrayList<WordNeuron>();
+            for (int i = 0; i < strs.length; i++) {
+                Neuron entry = wordMap.get(strs[i]);
+                if (entry == null) continue;
+
+                if (sample > 0) {
+                    double ran = (Math.sqrt(entry.freq / (sample * trainWordsCount)) + 1)
+                            * (sample * trainWordsCount) / entry.freq;
+                    nextRandom = nextRandom * 25214903917L + 11;
+                    if (ran < (nextRandom & 0xFFFF) / (double) 65536) {
+                        continue;
+                    }
+                }
+                sentence.add((WordNeuron) entry);
+            }
+
+            for (int index = 0; index < sentence.size(); index++) {
+                nextRandom = nextRandom * 25214903917L + 11;
+                if (isCbow) {
+                    cbowGram(index, sentence, (int) Math.abs(nextRandom % window), nextRandom);
+                } else {
+                    skipGram(index, sentence, (int) Math.abs(nextRandom % window), nextRandom);
+                }
+            }
         }
+        long time = (System.currentTimeMillis() - startTime) / 1000;
+        System.out.println("Vocab size: " + wordMap.size());
+        System.out.println("Words in train file: " + trainWordsCount);
+        System.out.println("elapsed time: " + time);
     }
 
     /**
@@ -281,6 +281,7 @@ public class Word2VecLearn {
                 for (String string : split) {
                     mc.add(string);
                 }
+                data.add(split);
             }
         }
         for (Map.Entry<String, Integer> element : mc.get().entrySet()) {
@@ -288,32 +289,25 @@ public class Word2VecLearn {
         }
     }
 
-    private void readVocabWithSupervised(File[] files) throws IOException {
-        for (int category = 0; category < files.length; category++) {
-            // 对多个文件学习
-            mc = new MapCount<>();
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(files[category])))) {
+    private void readVocab(File[] files) throws IOException {
+        mc = new MapCount<>();
+        for (File file : files) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
+
                 String temp = null;
                 while ((temp = br.readLine()) != null) {
-                    String[] split = temp.split(" ");
+                    String[] split = temp.split("\t+| +");
                     trainWordsCount += split.length;
                     for (String string : split) {
                         mc.add(string);
                     }
+                    data.add(split);
                 }
             }
-            for (Map.Entry<String, Integer> element : mc.get().entrySet()) {
-                double tarFreq = (double) element.getValue() / mc.size();
-                if (wordMap.get(element.getKey()) != null) {
-                    double srcFreq = wordMap.get(element.getKey()).freq;
-                    if (srcFreq >= tarFreq) continue;
-                    Neuron wordNeuron = wordMap.get(element.getKey());
-                    wordNeuron.category = category;
-                    wordNeuron.freq = tarFreq;
-                } else {
-                    wordMap.put(element.getKey(), new WordNeuron(element.getKey(), tarFreq, category, layerSize));
-                }
-            }
+        }
+
+        for (Map.Entry<String, Integer> element : mc.get().entrySet()) {
+            wordMap.put(element.getKey(), new WordNeuron(element.getKey(), (double) element.getValue() / mc.size(), layerSize));
         }
     }
 
@@ -344,7 +338,7 @@ public class Word2VecLearn {
         }
     }
 
-    public void learnFile(File file) throws IOException {
+    public void learnFile(File file, int epoch) throws IOException {
         readVocab(file);
         new Haffman(layerSize).make(wordMap.values());
         if (isNegative) initializeUnigramTable();
@@ -352,19 +346,30 @@ public class Word2VecLearn {
         for (Neuron neuron : wordMap.values()) {
             ((WordNeuron) neuron).makeNeurons();
         }
-
-        trainModel(file);
+        long startTime = System.currentTimeMillis();
+        for (int i = 1; i <= epoch; i++) {
+            System.out.println("Epoch " + i);
+            trainModel();
+        }
+        long time = (System.currentTimeMillis() - startTime) / 1000;
+        System.out.println("time-consuming " + time);
     }
 
-    public void learnFile(File summaryFile, File[] classifiedFiles) throws IOException {
-        readVocabWithSupervised(classifiedFiles);
+    public void learnFile(File[] files, int epoch) throws IOException {
+        readVocab(files);
         new Haffman(layerSize).make(wordMap.values());
         if (isNegative) initializeUnigramTable();
         // 查找每个神经元
         for (Neuron neuron : wordMap.values()) {
             ((WordNeuron) neuron).makeNeurons();
         }
-        trainModel(summaryFile);
+        long startTime = System.currentTimeMillis();
+        for (int i = 1; i <= epoch; i++) {
+            System.out.println("Epoch " + i);
+            trainModel();
+        }
+        long time = (System.currentTimeMillis() - startTime) / 1000;
+        System.out.println("time-consuming " + time);
     }
 
     // 保存模型
